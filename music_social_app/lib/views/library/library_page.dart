@@ -10,7 +10,6 @@ class LibraryPage extends StatefulWidget {
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
-// Static Genres/Filters -> Later Dynamic ?! ////////////////////
 class _LibraryPageState extends State<LibraryPage> {
   String searchTerm = '';
   String selectedGenre = 'All';
@@ -30,9 +29,6 @@ class _LibraryPageState extends State<LibraryPage> {
   ];
   final List<String> years = ['All', '1999', '2019', '2020'];
 
-  ////////////////////////////////////////////////////////////////
-
-  // Filter Logic
   List<Map<String, String>> get filteredSongs {
     return songs.where((song) {
       return (searchTerm.isEmpty ||
@@ -49,6 +45,7 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF121212), // Spotify Hintergrund
       appBar: const CustomAppBar(title: 'Library'),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -56,11 +53,16 @@ class _LibraryPageState extends State<LibraryPage> {
           children: [
             // Search bar
             TextField(
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search, color: Colors.white),
                 hintText: 'Search songs...',
+                hintStyle: const TextStyle(color: Color(0xFFB3B3B3)),
+                filled: true,
+                fillColor: const Color(0xFF2A2A2A),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
               ),
               onChanged: (val) => setState(() => searchTerm = val),
@@ -125,12 +127,22 @@ class _LibraryPageState extends State<LibraryPage> {
                 itemBuilder: (context, index) {
                   final song = filteredSongs[index];
                   return ListTile(
-                    leading: const Icon(Icons.music_note),
-                    title: Text(song['title']!),
+                    leading: const Icon(
+                      Icons.music_note,
+                      color: Color(0xFF1DB954),
+                    ),
+                    title: Text(
+                      song['title']!,
+                      style: const TextStyle(color: Colors.white),
+                    ),
                     subtitle: Text(
                       '${song['artist']} • ${song['genre']} • ${song['year']}',
+                      style: const TextStyle(color: Color(0xFFB3B3B3)),
                     ),
-                    trailing: Text(song['country']!),
+                    trailing: Text(
+                      song['country']!,
+                      style: const TextStyle(color: Color(0xFFB3B3B3)),
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -156,15 +168,27 @@ class _LibraryPageState extends State<LibraryPage> {
     Function(String) onChanged,
   ) {
     return DropdownButtonFormField<String>(
+      dropdownColor: const Color(0xFF2A2A2A),
       value: current,
       items:
           options
-              .map((opt) => DropdownMenuItem(value: opt, child: Text(opt)))
+              .map(
+                (opt) => DropdownMenuItem(
+                  value: opt,
+                  child: Text(opt, style: const TextStyle(color: Colors.white)),
+                ),
+              )
               .toList(),
       onChanged: (val) => onChanged(val!),
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        labelStyle: const TextStyle(color: Color(0xFFB3B3B3)),
+        filled: true,
+        fillColor: const Color(0xFF2A2A2A),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
         isDense: true,
       ),
     );

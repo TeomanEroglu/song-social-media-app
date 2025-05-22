@@ -11,6 +11,7 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
+  late PageController _pageController;
 
   final List<Widget> _pages = [
     HomePage(),
@@ -19,57 +20,108 @@ class _MainNavigationState extends State<MainNavigation> {
     ProfilePage(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onPageChanged(int index) {
     setState(() => _selectedIndex = index);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder:
-            (child, animation) =>
-                FadeTransition(opacity: animation, child: child),
-        child: _pages[_selectedIndex],
-        layoutBuilder:
-            (currentChild, previousChildren) =>
-                currentChild ?? const SizedBox(),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
       ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF121212),
 
-      // NAVIGATION BAR //
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.white,
-        elevation: 1,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+        // 🔁 PageView mit besserem Swipe-Verhalten
+        body: PageView.builder(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          itemCount: _pages.length,
+          itemBuilder: (context, index) => _pages[index],
+          physics: const ClampingScrollPhysics(), // <- besseres Einrasten
+          pageSnapping: true,
+        ),
+
+        // ⬇️ Bottom Navigation Bar
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF181818),
+            border: Border(top: BorderSide(color: Colors.black26, width: 0.3)),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
-            label: 'Explore',
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 14, 0, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(4, (index) {
+                  final icons = [
+                    Icons.home_outlined,
+                    Icons.search_outlined,
+                    Icons.library_music_outlined,
+                    Icons.person_outline,
+                  ];
+                  final labels = ['Home', 'Explore', 'Library', 'Profile'];
+
+                  final isSelected = _selectedIndex == index;
+
+                  return GestureDetector(
+                    onTap: () => _onItemTapped(index),
+                    behavior: HitTestBehavior.opaque,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          icons[index],
+                          size: 28,
+                          color:
+                              isSelected
+                                  ? const Color(0xFF1DB954)
+                                  : const Color(0xFFB3B3B3),
+                        ),
+                        const SizedBox(height: 4),
+                        AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: isSelected ? 1 : 0,
+                          child: Text(
+                            labels[index],
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF1DB954),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_music_outlined),
-            activeIcon: Icon(Icons.library_music),
-            label: 'Library',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }

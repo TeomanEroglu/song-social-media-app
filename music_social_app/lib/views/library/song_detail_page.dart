@@ -17,7 +17,6 @@ class _SongDetailPageState extends State<SongDetailPage> {
   void _submitPost() {
     final comment = _commentController.text.trim();
 
-    // Insert Logic (insert at top of feed)
     if (comment.isNotEmpty) {
       feedPosts.insert(0, {
         'song': widget.song,
@@ -32,7 +31,7 @@ class _SongDetailPageState extends State<SongDetailPage> {
       ).showSnackBar(const SnackBar(content: Text('✅ Post published to feed')));
 
       _commentController.clear();
-      Navigator.pop(context); // Zurück zur Library oder Home
+      Navigator.pop(context);
     }
   }
 
@@ -45,7 +44,7 @@ class _SongDetailPageState extends State<SongDetailPage> {
           onTap: () => setState(() => rating = index + 1),
           child: Icon(
             filled ? Icons.star_rounded : Icons.star_border_rounded,
-            color: filled ? Colors.amber : Colors.grey[400],
+            color: filled ? const Color(0xFF1DB954) : Colors.grey[700],
             size: 34,
           ),
         );
@@ -58,11 +57,11 @@ class _SongDetailPageState extends State<SongDetailPage> {
     final song = widget.song;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: Text(song['title'] ?? ''),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: const Color(0xFF121212),
+        foregroundColor: Colors.white,
         elevation: 0.3,
       ),
       body: SingleChildScrollView(
@@ -70,64 +69,73 @@ class _SongDetailPageState extends State<SongDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Coverbild (Aktuell statisch später dynamisch aus Spotify API)
             Image.asset(
-              'assets/images/cover1.jpg', // später: song['image']
+              'assets/images/cover1.jpg',
               height: 220,
               width: 220,
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 20),
 
-            // Song-Title/Artist
             Text(
               song['title'] ?? '',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
               textAlign: TextAlign.center,
             ),
             Text(
               song['artist'] ?? '',
-              style: const TextStyle(fontSize: 15, color: Colors.grey),
+              style: const TextStyle(fontSize: 15, color: Color(0xFFB3B3B3)),
               textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 24),
 
-            // ▶Player (Dummy) -> Platzhalter für Spotify API-Player
             Container(
               height: 56,
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+                color: const Color(0xFF2A2A2A),
               ),
               child: const Center(
-                child: Icon(Icons.play_arrow_rounded, size: 32),
+                child: Icon(
+                  Icons.play_arrow_rounded,
+                  size: 32,
+                  color: Colors.white,
+                ),
               ),
             ),
 
             const SizedBox(height: 30),
 
-            // Bewertung
             const Text(
               'Your Rating:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 8),
             _buildStarRating(),
 
             const SizedBox(height: 30),
 
-            // Kommentar
             TextField(
               controller: _commentController,
               maxLines: 2,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Your comment',
+                hintStyle: const TextStyle(color: Color(0xFFB3B3B3)),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: const Color(0xFF2A2A2A),
                 border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade300),
+                  borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
@@ -139,12 +147,11 @@ class _SongDetailPageState extends State<SongDetailPage> {
 
             const SizedBox(height: 20),
 
-            // Post Button
             ElevatedButton(
               onPressed: _submitPost,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE8E6F7),
-                foregroundColor: const Color(0xFF2F2F2F),
+                backgroundColor: const Color(0xFF1DB954),
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),

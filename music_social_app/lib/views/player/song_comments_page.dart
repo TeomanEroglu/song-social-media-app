@@ -14,107 +14,124 @@ class SongCommentsPage extends StatelessWidget {
         }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: Text(song['title'] ?? 'Song Details'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0.5,
+        backgroundColor: const Color(0xFF121212),
+        foregroundColor: Colors.white,
+        elevation: 0.3,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 🎵 Coverbild
+            // Coverbild
             Image.asset(
-              'assets/images/cover1.jpg', // ⬅️ Optional: song['image']
-              height: 220,
-              width: 220,
+              'assets/images/cover1.jpg',
+              height: 260,
+              width: 260,
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 20),
 
-            // 🎤 Songinfos
+            // Songtitel und Künstler
             Text(
               song['title'] ?? '',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
             Text(
               song['artist'] ?? '',
-              style: const TextStyle(fontSize: 15, color: Colors.grey),
+              style: const TextStyle(color: Color(0xFFB3B3B3), fontSize: 14),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 24),
 
-            const SizedBox(height: 30),
+            // Player-Steuerelemente
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Icon(Icons.shuffle, color: Color(0xFFB3B3B3)),
+                Icon(Icons.skip_previous, size: 32, color: Colors.white),
+                Icon(Icons.play_circle_fill, size: 56, color: Colors.white),
+                Icon(Icons.skip_next, size: 32, color: Colors.white),
+                Icon(Icons.repeat, color: Color(0xFFB3B3B3)),
+              ],
+            ),
+            const SizedBox(height: 32),
 
-            // 💬 Kommentare
-            Align(
+            // Comments Überschrift
+            const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Comments',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: TextStyle(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Colors.white,
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
+            // Kommentare
             if (commentsForSong.isEmpty)
               const Text(
                 'No comments yet.',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Color(0xFFB3B3B3)),
               )
             else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: commentsForSong.length,
-                itemBuilder: (context, index) {
-                  final post = commentsForSong[index];
-                  final comment = post['comment'];
-                  final rating = post['rating'];
-                  final user = post['user'] ?? 'User';
+              ...commentsForSong.map((post) {
+                final comment = post['comment'];
+                final rating = post['rating'];
+                final user = post['user'] ?? 'User';
 
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const CircleAvatar(
-                          radius: 20,
-                          backgroundImage: AssetImage(
-                            'assets/images/profile.jpg',
-                          ),
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF181818),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const CircleAvatar(
+                        radius: 20,
+                        backgroundImage: AssetImage(
+                          'assets/images/profile.jpg',
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '$user  •  ${rating.toString()} ★',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '$user  •  ${rating.toString()} ★',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                              const SizedBox(height: 4),
-                              Text(comment),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              comment,
+                              style: const TextStyle(color: Color(0xFFB3B3B3)),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
           ],
         ),
       ),

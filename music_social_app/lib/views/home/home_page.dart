@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
                   child: Text(
                     'No posts yet.\nRate & comment songs to see them here.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Color(0xFFB3B3B3)),
                   ),
                 )
                 : ListView.builder(
@@ -53,7 +53,7 @@ class HomePage extends StatelessWidget {
                                 '$user has posted',
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey,
+                                  color: Color(0xFFB3B3B3),
                                 ),
                               ),
                             ],
@@ -86,7 +86,7 @@ class HomePage extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                color: const Color(0xFFF8F4FF),
+                                color: const Color(0xFF181818),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16),
                                   child: Row(
@@ -102,13 +102,14 @@ class HomePage extends StatelessWidget {
                                               song['title'] ?? '',
                                               style: const TextStyle(
                                                 fontSize: 18,
+                                                color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             Text(
                                               song['artist'] ?? '',
                                               style: const TextStyle(
-                                                color: Colors.grey,
+                                                color: Color(0xFFB3B3B3),
                                               ),
                                             ),
                                             const SizedBox(height: 8),
@@ -121,8 +122,8 @@ class HomePage extends StatelessWidget {
                                                           .star_border_rounded,
                                                   color:
                                                       i < rating
-                                                          ? Colors.amber
-                                                          : Colors.grey[400],
+                                                          ? Color(0xFF1DB954)
+                                                          : Colors.grey[700],
                                                   size: 20,
                                                 );
                                               }),
@@ -132,6 +133,7 @@ class HomePage extends StatelessWidget {
                                               '"$comment"',
                                               style: const TextStyle(
                                                 fontSize: 15,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ],

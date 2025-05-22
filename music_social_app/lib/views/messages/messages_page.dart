@@ -14,22 +14,33 @@ class MessagesPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: const Text('Messages'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: const Color(0xFF121212),
+        foregroundColor: Colors.white,
         elevation: 0.5,
       ),
       body: ListView.separated(
         itemCount: messages.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
+        separatorBuilder:
+            (context, index) => Divider(color: Colors.grey.shade800, height: 1),
         itemBuilder: (context, index) {
           final message = messages[index];
           return ListTile(
-            leading: const CircleAvatar(child: Icon(Icons.person)),
-            title: Text(message['name']!),
-            subtitle: Text(message['lastMessage']!),
-            trailing: const Icon(Icons.chevron_right),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFF1DB954),
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            title: Text(
+              message['name']!,
+              style: const TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(
+              message['lastMessage']!,
+              style: const TextStyle(color: Color(0xFFB3B3B3)),
+            ),
+            trailing: const Icon(Icons.chevron_right, color: Colors.white54),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(

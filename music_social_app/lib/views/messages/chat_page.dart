@@ -31,11 +31,12 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: Text(widget.userName),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0.5,
+        backgroundColor: const Color(0xFF121212),
+        foregroundColor: Colors.white,
+        elevation: 0.3,
       ),
       body: Column(
         children: [
@@ -51,37 +52,51 @@ class _ChatPageState extends State<ChatPage> {
                   alignment:
                       isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    margin: const EdgeInsets.symmetric(vertical: 6),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                      horizontal: 14,
+                      vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: isMe ? Colors.grey[300] : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
+                      color:
+                          isMe
+                              ? const Color(0xFF1DB954).withOpacity(0.9)
+                              : const Color(0xFF2A2A2A),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(12),
+                        topRight: const Radius.circular(12),
+                        bottomLeft: Radius.circular(isMe ? 12 : 0),
+                        bottomRight: Radius.circular(isMe ? 0 : 12),
+                      ),
                     ),
-                    child: Text(msg['text']),
+                    child: Text(
+                      msg['text'],
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                 );
               },
             ),
           ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          const Divider(height: 1, color: Colors.grey),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            color: const Color(0xFF181818),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
+                    style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
                       hintText: "Nachricht schreiben...",
+                      hintStyle: TextStyle(color: Colors.grey),
                       border: InputBorder.none,
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.send),
+                  icon: const Icon(Icons.send, color: Color(0xFF1DB954)),
                   onPressed: _sendMessage,
                 ),
               ],

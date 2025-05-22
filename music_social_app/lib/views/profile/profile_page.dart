@@ -1,11 +1,41 @@
 import 'package:flutter/material.dart';
 import '../../data/feed_data.dart';
 import '../player/song_comments_page.dart';
+import '../profile/edit_bio_page.dart'; // Pfad ggf. anpassen
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final String currentUser = 'Antonia';
+
+  String bio = 'Music lover. Concert goer. Always looking for new tracks.';
+
+  void _editBio() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EditBioPage(currentBio: bio)),
+    );
+
+    if (result != null && result is String && result.trim().isNotEmpty) {
+      setState(() {
+        bio = result.trim();
+      });
+
+      // Optional: Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('✅ Bio updated'),
+          backgroundColor: Color(0xFF1DB954),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +43,11 @@ class ProfilePage extends StatelessWidget {
         feedPosts.where((post) => post['user'] == currentUser).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: const Color(0xFF121212),
+        foregroundColor: Colors.white,
         elevation: 0.3,
       ),
       body: SingleChildScrollView(
@@ -33,21 +63,53 @@ class ProfilePage extends StatelessWidget {
 
             Text(
               currentUser,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 8),
 
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE8E6F7),
-                foregroundColor: Colors.deepPurple,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {}, // Add Friend Action
+                  icon: const Icon(Icons.person_add_alt_1),
+                  label: const Text('Add Friend'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2A2A2A),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    elevation: 0,
+                  ),
                 ),
-              ),
-              child: const Text('Edit profile'),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: _editBio,
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Change Bio'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2A2A2A),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    elevation: 0,
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 20),
@@ -57,16 +119,34 @@ class ProfilePage extends StatelessWidget {
               children: const [
                 Column(
                   children: [
-                    Text('120', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      '120',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                     SizedBox(height: 4),
-                    Text('Following', style: TextStyle(color: Colors.grey)),
+                    Text(
+                      'Following',
+                      style: TextStyle(color: Color(0xFFB3B3B3)),
+                    ),
                   ],
                 ),
                 Column(
                   children: [
-                    Text('88', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      '88',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                     SizedBox(height: 4),
-                    Text('Followers', style: TextStyle(color: Colors.grey)),
+                    Text(
+                      'Followers',
+                      style: TextStyle(color: Color(0xFFB3B3B3)),
+                    ),
                   ],
                 ),
               ],
@@ -78,32 +158,12 @@ class ProfilePage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color(0xFF181818),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Music lover. Concert goer. Always looking for new tracks.',
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.person_add_alt_1),
-              label: const Text('Add Friend'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple.shade50,
-                foregroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 14,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                elevation: 0,
+              child: Text(
+                bio,
+                style: const TextStyle(fontSize: 15, color: Colors.white),
               ),
             ),
 
@@ -116,7 +176,7 @@ class ProfilePage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -125,7 +185,7 @@ class ProfilePage extends StatelessWidget {
             if (userPosts.isEmpty)
               const Text(
                 'You haven’t posted anything yet.',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Color(0xFFB3B3B3)),
               )
             else
               ...userPosts.map((post) {
@@ -166,7 +226,7 @@ class ProfilePage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF181818),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -182,13 +242,19 @@ class ProfilePage extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-                Text(comment),
+                Text(comment, style: const TextStyle(color: Color(0xFFB3B3B3))),
               ],
             ),
           ),
-          Text('${rating.toStringAsFixed(1)} ★'),
+          Text(
+            '${rating.toStringAsFixed(1)} ★',
+            style: const TextStyle(color: Colors.white),
+          ),
         ],
       ),
     );

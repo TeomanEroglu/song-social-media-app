@@ -9,17 +9,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF121212), // Spotify Dark
       elevation: 0.5,
       title: Text(
         title,
         style: const TextStyle(
-          color: Color.from(
-            alpha: 0.114,
-            red: 0.725,
-            green: 0.329,
-            blue: 0.298,
-          ),
+          color: Colors.white, // Primärtextfarbe
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -27,7 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(
             Icons.mail_outline,
-            color: Color.fromARGB(255, 29, 185, 84),
+            color: Color(0xFF1DB954), // Spotify Grün
           ),
           onPressed: () {
             Navigator.of(context).push(

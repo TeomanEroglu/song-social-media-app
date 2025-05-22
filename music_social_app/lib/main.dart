@@ -12,12 +12,15 @@ class MyMusicApp extends StatelessWidget {
       title: 'Music Social App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFFF9F9F9),
-        iconTheme: IconThemeData(size: 28),
-        primarySwatch:
-            Colors
-                .grey, //Durch Swatch können verschiedene Abstufungen von der Farbe grey verwendet werden
+        scaffoldBackgroundColor: Color(0xFF121212),
+        iconTheme: IconThemeData(size: 28, color: Colors.white),
+        primaryColor: Color(0xFF1DB954),
         fontFamily: 'Roboto',
+        textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF121212),
+          foregroundColor: Colors.white,
+        ),
       ),
       home: MainNavigation(),
     );

@@ -8,7 +8,12 @@ plugins {
 android {
     namespace = "com.example.music_social_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+
+    // ────────────────────────────────────────────────────────────
+    // Force the exact NDK revision required by flutter_secure_storage (and other plugins)
+    // See build log: "flutter_secure_storage requires Android NDK 27.0.12077973"
+    // ────────────────────────────────────────────────────────────
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -20,12 +25,15 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // Specify your own unique Application ID.
         applicationId = "com.example.music_social_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+
+        // Minimum API level raised from 21 → 23 to satisfy plugin requirements (flutter_secure_storage 10.x).
+        minSdk = 23
+
+        // Keep the targetSdk in sync with Flutter's recommendation (usually 34).
         targetSdk = flutter.targetSdkVersion
+
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

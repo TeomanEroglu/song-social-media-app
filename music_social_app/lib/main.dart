@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'navigation/main_navigation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
-void main() {
-  runApp(MyMusicApp());
+Future<void> main() async {                           //   für API async-Funktion
+  WidgetsFlutterBinding.ensureInitialized();          //   Flutter-Init
+  await dotenv.load(fileName: '.env');                //   .env laden
+  runApp(const MyMusicApp());                         // 
 }
 
 class MyMusicApp extends StatelessWidget {
+  const MyMusicApp({super.key});                      //   const-Konstruktor
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

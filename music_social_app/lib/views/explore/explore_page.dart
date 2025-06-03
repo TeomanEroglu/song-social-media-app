@@ -1,132 +1,123 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../state/explore_songs_provider.dart';
 
 class ExplorePage extends StatelessWidget {
-  final List<Map<String, dynamic>> sections = [
-    {
-      'title': 'Your top genres',
-      'items': [
-        {'label': 'Pop', 'color': Color(0xFF9B51E0)},
-        {'label': 'Indie', 'color': Color(0xFF6FCF97)},
-      ],
-    },
-    {
-      'title': 'Popular podcast categories',
-      'items': [
-        {'label': 'News & Politics', 'color': Color(0xFF2D9CDB)},
-        {'label': 'Comedy', 'color': Color(0xFFEB5757)},
-      ],
-    },
-    {
-      'title': 'Browse all',
-      'items': [
-        {'label': '2021 Wrapped', 'color': Color(0xFFE0E267)},
-        {'label': 'Podcasts', 'color': Color(0xFF2F80ED)},
-        {'label': 'Made for you', 'color': Color(0xFF27AE60)},
-        {'label': 'Charts', 'color': Color(0xFFBB6BD9)},
-      ],
-    },
-  ];
+  const ExplorePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ExploreSongsProvider(),        // ⚠️  keine Initialsuche
+      child: const _ExploreView(),
+    );
+  }
+}
+
+class _ExploreView extends StatefulWidget {
+  const _ExploreView({super.key});
+
+  @override
+  State<_ExploreView> createState() => _ExploreViewState();
+}
+
+class _ExploreViewState extends State<_ExploreView> {
+  final _controller = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onQueryChanged(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      final trimmed = query.trim();
+      if (trimmed.isEmpty) {
+        // leeren Zustand anzeigen
+        context.read<ExploreSongsProvider>().reset();
+        return;
+      }
+      context.read<ExploreSongsProvider>().loadInitial(trimmed);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<ExploreSongsProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
+        title: const Text('Explore', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF121212),
         elevation: 0,
-        title: const Text('Search', style: TextStyle(color: Colors.white)),
-        centerTitle: false,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(Icons.camera_alt_outlined, color: Colors.white),
-          ),
-        ],
       ),
-      body: ListView(
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        children: [
-          // 🔍 Search Bar
-          TextField(
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xFF2A2A2A),
-              hintText: 'Artists, songs, or podcasts',
-              hintStyle: const TextStyle(color: Colors.grey),
-              prefixIcon: const Icon(Icons.search, color: Colors.white),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              onChanged: _onQueryChanged,
+              onSubmitted: _onQueryChanged,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                hintText: 'Search tracks',
+                hintStyle: const TextStyle(color: Colors.white54),
+                filled: true,
+                fillColor: const Color(0xFF2A2A2A),
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 24),
-
-          // 📚 Sections
-          ...sections.map((section) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  section['title'],
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 2.7,
-                  children: List.generate(section['items'].length, (index) {
-                    final item = section['items'][index];
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: item['color'],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              item['label'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const Align(
-                            alignment: Alignment.bottomRight,
-                            child: RotatedBox(
-                              quarterTurns: 1,
-                              child: Icon(
-                                Icons.album,
-                                color: Colors.black45,
-                                size: 32,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 28),
-              ],
-            );
-          }).toList(),
-        ],
+            const SizedBox(height: 24),
+            Expanded(child: _buildBody(state)),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildBody(ExploreSongsProvider state) {
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.error != null) {
+      return Center(
+        child: Text(state.error!, style: const TextStyle(color: Colors.white70)),
+      );
+    }
+    if (state.songs.isEmpty) {
+      // weder Fehlermeldung noch Ergebnisse → einfach leer
+      return const SizedBox.shrink();
+    }
+    return ListView.builder(
+      itemCount: state.songs.length,
+      itemBuilder: (_, i) {
+        final song = state.songs[i];
+        return ListTile(
+          leading: song.albumImageUrl != null
+              ? Image.network(
+                  song.albumImageUrl!,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                )
+              : const Icon(Icons.music_note, color: Colors.white70),
+          title:
+              Text(song.title, style: const TextStyle(color: Colors.white)),
+          subtitle:
+              Text(song.artist, style: const TextStyle(color: Colors.white70)),
+        );
+      },
     );
   }
 }

@@ -1,32 +1,44 @@
 import 'package:flutter/material.dart';
-import 'navigation/main_navigation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
-Future<void> main() async {                           //   für API async-Funktion
-  WidgetsFlutterBinding.ensureInitialized();          //   Flutter-Init
-  await dotenv.load(fileName: '.env');                //   .env laden
-  runApp(const MyMusicApp());                         // 
+import 'state/auth_provider.dart';      // globaler Login-Status
+import 'app_start/auth_gate.dart';      // zeigt LoginPage oder MainNavigation
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');          // Secrets & Keys laden
+
+  runApp(
+    ChangeNotifierProvider<AuthProvider>(
+      create: (_) => AuthProvider()..restore(), // vorhandene Session prüfen
+      child: const TuneTalkrApp(),
+    ),
+  );
 }
 
-class MyMusicApp extends StatelessWidget {
-  const MyMusicApp({super.key});                      //   const-Konstruktor
+/// Root-Widget der App.  Hält nur Theme & leitet an den AuthGate weiter.
+class TuneTalkrApp extends StatelessWidget {
+  const TuneTalkrApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Music Social App',
+      title: 'TuneTalkr',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF121212),
-        iconTheme: IconThemeData(size: 28, color: Colors.white),
-        primaryColor: Color(0xFF1DB954),
-        fontFamily: 'Roboto',
-        textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
+        scaffoldBackgroundColor: const Color(0xFF121212),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF121212),
           foregroundColor: Colors.white,
         ),
+        iconTheme: const IconThemeData(size: 28, color: Colors.white),
+        primaryColor: const Color(0xFF1DB954),
+        fontFamily: 'Roboto',
+        textTheme:
+            const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: MainNavigation(),
+      home: const AuthGate(),            // entscheidet: LoginPage oder Home
     );
   }
 }

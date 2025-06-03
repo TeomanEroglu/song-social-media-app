@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../state/auth_provider.dart';
 import '../../data/feed_data.dart';
-import '../player/song_comments_page.dart';
 import '../profile/edit_bio_page.dart';
-import '../../services/spotify_auth_service.dart';
+import '../player/song_comments_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -14,68 +16,19 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with AutomaticKeepAliveClientMixin {
   // ─────────────────────────────────────────────
-  //  State
+  //  eigener State (nur Bio-Text)
   // ─────────────────────────────────────────────
-  String currentUser = 'Guest';
-  bool _loggedIn = false;
-  String bio =
-      'Music lover. Concert goer. Always looking for new tracks.';
+  String bio = 'Music lover. Concert goer. Always looking for new tracks.';
 
-  //  KeepAlive aktivieren
+  //  KeepAlive (Profil-Tab in BottomNavigation)
   @override
   bool get wantKeepAlive => true;
 
-  //  Session wiederherstellen, falls Token vorhanden
-  @override
-  void initState() {
-    super.initState();
-    _restoreSession();
-  }
-
-  Future<void> _restoreSession() async {
-    if (await SpotifyAuthService().isLoggedIn()) {
-      final api = await SpotifyAuthService().connect();
-      final me = await api.me.get();
-      setState(() {
-        _loggedIn = true;
-        currentUser = me.displayName ?? 'Unbekannt';
-      });
-    }
-  }
-
-  //  Login / Logout
-  Future<void> _toggleSpotifyLogin() async {
-    if (_loggedIn) {
-      await SpotifyAuthService().logout();
-      setState(() {
-        _loggedIn = false;
-        currentUser = 'Guest';
-      });
-    } else {
-      try {
-        final api = await SpotifyAuthService().connect();
-        final me = await api.me.get();
-        debugPrint('🎵 Eingeloggt als ${me.displayName}');
-        setState(() {
-          _loggedIn = true;
-          currentUser = me.displayName ?? 'Unbekannt';
-        });
-      } catch (e) {
-        debugPrint('Spotify-Login fehlgeschlagen: $e');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login failed')),
-          );
-        }
-      }
-    }
-  }
-
-  //  Bio bearbeiten
-  void _editBio() async {
+  //  Bio-Dialog
+  Future<void> _editBio() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => EditBioPage(currentBio: bio)),
+      MaterialPageRoute(builder: (_) => EditBioPage(currentBio: bio)),
     );
 
     if (result != null && result is String && result.trim().isNotEmpty) {
@@ -85,19 +38,40 @@ class _ProfilePageState extends State<ProfilePage>
           const SnackBar(
             content: Text('✅ Bio updated'),
             backgroundColor: Color(0xFF1DB954),
-            duration: Duration(seconds: 2),
           ),
         );
       }
     }
   }
 
+  //  Login / Logout über AuthProvider
+  Future<void> _toggleSpotifyLogin(AuthProvider auth) async {
+    if (auth.isLoggedIn) {
+      await auth.logout();
+    } else {
+      try {
+        await auth.loginWithSpotify();
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login failed')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    super.build(context); // wichtig bei KeepAlive!
+    super.build(context); // wichtig bei KeepAlive
 
+    final auth = context.watch<AuthProvider>();
+    final currentUser = auth.displayName;
+    final loggedIn = auth.isLoggedIn;
+
+    // Beispiel-Filter für Activity-Feed
     final userPosts =
-        feedPosts.where((post) => post['user'] == currentUser).toList();
+        feedPosts.where((p) => p['user'] == currentUser).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -126,6 +100,8 @@ class _ProfilePageState extends State<ProfilePage>
               ),
             ),
             const SizedBox(height: 8),
+
+            // ───── Action Buttons ─────
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -133,45 +109,24 @@ class _ProfilePageState extends State<ProfilePage>
                   onPressed: () {},
                   icon: const Icon(Icons.person_add_alt_1),
                   label: const Text('Add Friend'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2A2A2A),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    elevation: 0,
-                  ),
+                  style: _greyButtonStyle,
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton.icon(
                   onPressed: _editBio,
                   icon: const Icon(Icons.edit),
                   label: const Text('Change Bio'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2A2A2A),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    elevation: 0,
-                  ),
+                  style: _greyButtonStyle,
                 ),
               ],
             ),
             const SizedBox(height: 20),
+
+            // Spotify Login / Logout
             ElevatedButton.icon(
-              onPressed: _toggleSpotifyLogin,
-              icon: Icon(_loggedIn ? Icons.logout : Icons.login),
-              label:
-                  Text(_loggedIn ? 'Logout Spotify' : 'Connect Spotify'),
+              onPressed: auth.isBusy ? null : () => _toggleSpotifyLogin(auth),
+              icon: Icon(loggedIn ? Icons.logout : Icons.login),
+              label: Text(loggedIn ? 'Logout Spotify' : 'Connect Spotify'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1DB954),
                 foregroundColor: Colors.white,
@@ -182,33 +137,16 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
-                Column(
-                  children: [
-                    Text('120',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white)),
-                    SizedBox(height: 4),
-                    Text('Following',
-                        style: TextStyle(color: Color(0xFFB3B3B3))),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text('88',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white)),
-                    SizedBox(height: 4),
-                    Text('Followers',
-                        style: TextStyle(color: Color(0xFFB3B3B3))),
-                  ],
-                ),
-              ],
+            if (auth.isBusy) const Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: CircularProgressIndicator(),
             ),
+
+            const SizedBox(height: 20),
+            _buildFollowersRow(),
             const SizedBox(height: 24),
+
+            // Bio
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -216,12 +154,12 @@ class _ProfilePageState extends State<ProfilePage>
                 color: const Color(0xFF181818),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                bio,
-                style: const TextStyle(fontSize: 15, color: Colors.white),
-              ),
+              child: Text(bio,
+                  style: const TextStyle(fontSize: 15, color: Colors.white)),
             ),
             const SizedBox(height: 24),
+
+            // Activity Feed
             const Align(
               alignment: Alignment.centerLeft,
               child: Text('Activity',
@@ -237,25 +175,35 @@ class _ProfilePageState extends State<ProfilePage>
             else
               ...userPosts.map((post) {
                 final song = post['song'];
-                final comment = post['comment'];
-                final rating = post['rating'];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 300),
-                      pageBuilder: (_, animation, __) =>
-                          SongCommentsPage(song: song),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                    ));
-                  },
+                  onTap: () => Navigator.of(context).push(PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (_, a, __) =>
+                        SongCommentsPage(song: song),
+                    transitionsBuilder: (_, a, __, child) =>
+                        FadeTransition(opacity: a, child: child),
+                  )),
                   child: _buildActivityItem(
-                      song['title'], comment, (rating as num).toDouble()),
+                    song['title'],
+                    post['comment'],
+                    (post['rating'] as num).toDouble(),
+                  ),
                 );
               }).toList(),
           ],
         ),
       ),
+    );
+  }
+
+  // Followers / Following Dummy-Row
+  Widget _buildFollowersRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: const [
+        _StatColumn(label: 'Following', value: '120'),
+        _StatColumn(label: 'Followers', value: '88'),
+      ],
     );
   }
 
@@ -290,6 +238,37 @@ class _ProfilePageState extends State<ProfilePage>
               style: const TextStyle(color: Colors.white)),
         ],
       ),
+    );
+  }
+
+  ButtonStyle get _greyButtonStyle => ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF2A2A2A),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        elevation: 0,
+      );
+}
+
+/// Kleine Hilfs-Widget-Klasse für Follower-Stats
+class _StatColumn extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _StatColumn({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(value,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white)),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(color: Color(0xFFB3B3B3))),
+      ],
     );
   }
 }

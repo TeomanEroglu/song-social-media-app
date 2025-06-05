@@ -83,7 +83,7 @@ class _MainNavigationState extends State<MainNavigation> {
                     Icons.library_music_outlined,
                     Icons.person_outline,
                   ];
-                  final labels = ['Home', 'Explore', 'Library', 'Profile'];
+                  final labels = ['Feed', 'Explore', 'Library', 'Profile'];
 
                   final isSelected = _selectedIndex == index;
 

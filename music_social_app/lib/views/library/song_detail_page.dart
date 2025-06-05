@@ -23,7 +23,7 @@ class _SongDetailPageState extends State<SongDetailPage> {
         'rating': rating,
         'comment': comment,
         'timestamp': DateTime.now(),
-        'user': 'Antonia',
+        'user': 'Hannes',
       });
 
       ScaffoldMessenger.of(

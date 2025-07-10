@@ -24,10 +24,9 @@ class _ExploreView extends StatefulWidget {
 
 class _ExploreViewState extends State<_ExploreView>
     with AutomaticKeepAliveClientMixin {
-  // ─────────────────────────────────────────────
   @override
-  bool get wantKeepAlive => true;          // Tab-Status behalten
-  // ─────────────────────────────────────────────
+  bool get wantKeepAlive => true;          
+
 
   final _controller = TextEditingController();
   final _focusNode  = FocusNode();
@@ -73,7 +72,7 @@ class _ExploreViewState extends State<_ExploreView>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);                  // wichtig für KeepAlive
+    super.build(context);                  
     final state = context.watch<ExploreSongsProvider>();
 
     return Scaffold(
@@ -127,7 +126,7 @@ class _ExploreViewState extends State<_ExploreView>
   }
 }
 
-/// ------------- GRID mit 6 Kategorien (nur UI) ----------------------------
+/// ------------- GRID with 6 Categories (only UI) ----------------------------
 class _CategoryGrid extends StatelessWidget {
   const _CategoryGrid();
 
@@ -147,7 +146,7 @@ class _CategoryGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: 1.6,               // größere Kacheln
+      childAspectRatio: 1.6,               
       children: _items.map((e) {
         final title = e.$1;
         final color = e.$2;
@@ -190,7 +189,7 @@ class _CategoryGrid extends StatelessWidget {
   }
 }
 
-/// ------------- SONG-LISTE -------------------------------------------------
+/// ------------- SONG-LIST -------------------------------------------------
 class _SongList extends StatelessWidget {
   final ExploreSongsProvider state;
   const _SongList({required this.state});

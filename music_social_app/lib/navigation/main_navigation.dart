@@ -55,17 +55,17 @@ class _MainNavigationState extends State<MainNavigation> {
       child: Scaffold(
         backgroundColor: const Color(0xFF121212),
 
-        // 🔁 PageView mit besserem Swipe-Verhalten
+        // PageView
         body: PageView.builder(
           controller: _pageController,
           onPageChanged: _onPageChanged,
           itemCount: _pages.length,
           itemBuilder: (context, index) => _pages[index],
-          physics: const ClampingScrollPhysics(), // <- besseres Einrasten
+          physics: const ClampingScrollPhysics(), 
           pageSnapping: true,
         ),
 
-        // ⬇️ Bottom Navigation Bar
+        // Bottom Navigation Bar
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF181818),

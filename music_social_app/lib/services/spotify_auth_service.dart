@@ -6,21 +6,15 @@ import 'package:oauth2_client/interfaces.dart';
 import 'package:spotify/spotify.dart';
 
 class SpotifyAuthService {
-  // ──────────────────────────────────────
-  // 1. Konstante Werte aus .env
-  // ──────────────────────────────────────
+  //  constant values from .env
   static final _clientId    = dotenv.env['SPOTIFY_CLIENT_ID']!;
   static final _redirectUri = dotenv.env['SPOTIFY_REDIRECT_URI']!;
   static final _scopes      = dotenv.env['SPOTIFY_SCOPES']!.split(',');
 
-  // ──────────────────────────────────────
-  // 2. Secure Storage für Token-Caching
-  // ──────────────────────────────────────
-  static const _secure = FlutterSecureStorage(); // AES-verschlüsselt auf Android/iOS
+  // 2. Secure Storage for Token-Caching
+  static const _secure = FlutterSecureStorage(); 
 
-  // ──────────────────────────────────────
   // 3. OAuth2-Client & Helper
-  // ──────────────────────────────────────
   static final _client = OAuth2Client(
     authorizeUrl: 'https://accounts.spotify.com/authorize',
     tokenUrl:     'https://accounts.spotify.com/api/token',
@@ -32,27 +26,20 @@ class SpotifyAuthService {
     _client,
     clientId: _clientId,
     scopes: _scopes,
-    // PKCE ist automatisch aktiv, weil kein Client-Secret angegeben wird
-    tokenStorage: TokenStorage(                          // // persistiert Access + Refresh Token
-      'spotify_tokens',                    // beliebiger Name
-        //hier war:  storage: SecureStorage(storage: _secure), das hat nicht funktioneirt und Chat meinte man kann das weglassen
+    tokenStorage: TokenStorage(                           // persistiert Access + Refresh Token
+      'spotify_tokens',                    
     ), 
   );
 
-  // ──────────────────────────────────────
-  // 4. Öffentliche API
-  // ──────────────────────────────────────
-  /// Liefert einen [SpotifyApi]-Client; loggt den User ein,
-  /// wenn noch kein (gültiger) Token da ist.
+  // Public API
+  /// Returns a [SpotifyApi] client; logs the user in if there isn’t a (valid) token yet.
   Future<SpotifyApi> connect() async {
-    final token = await _helper.getToken(); // erneuert automatisch
+    final token = await _helper.getToken(); 
     return SpotifyApi.withAccessToken(token!.accessToken!);
   }
 
-  /// Beendet die Sitzung: Tokens löschen
   Future<void> logout() async => _helper.removeAllTokens();
 
-  /// Gibt *true*, wenn ein gültiger Access-Token gespeichert ist.
   Future<bool> isLoggedIn() async =>
       (await _helper.getTokenFromStorage())?.isExpired() == false;
 }

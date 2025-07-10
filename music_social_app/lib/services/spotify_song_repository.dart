@@ -38,7 +38,7 @@ class SpotifySongRepository {
     
       final api = await SpotifyAuthService().connect();
 
-      // Perform the search. We request only tracks for now.
+      // Perform the search. 
       final pages = api.search.get(
         query,
         types: [SearchType.track],

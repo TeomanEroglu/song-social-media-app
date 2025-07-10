@@ -45,7 +45,7 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Spotify Hintergrund
+      backgroundColor: const Color(0xFF121212), 
       appBar: const CustomAppBar(title: 'Library'),
       body: Padding(
         padding: const EdgeInsets.all(16),

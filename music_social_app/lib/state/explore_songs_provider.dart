@@ -4,20 +4,20 @@ import '../services/spotify_song_repository.dart';
 /// Holds loading / data / error state for the Explore page.
 /// Uses [SpotifySongRepository] to fetch tracks.
 class ExploreSongsProvider extends ChangeNotifier {
-  // ── öffentlicher State ────────────────────────────────────────────────
+  // ── public state -----------------------------------------------------------
   bool isLoading = false;
   String? error;
   List<Song> songs = [];
 
-  // ── interne Helfer ────────────────────────────────────────────────────
+  /// Singleton instance for easy access in the app.
   final SpotifySongRepository _repo = SpotifySongRepository();
   static const int _pageSize = 50;
 
   int _offset = 0;
-  String _currentQuery = 'test';      // Default-Suchbegriff
+  String _currentQuery = 'test';      
 
   // ── API ───────────────────────────────────────────────────────────────
-  /// Lädt die erste Seite für [query] (Standard = 'test') und setzt den UI-State.
+  /// Loads the first page for [query] (default = 'test') and sets the UI state.
   Future<void> loadInitial([String query = 'test']) async {
     _currentQuery = query;
     _offset = 0;
@@ -44,7 +44,7 @@ class ExploreSongsProvider extends ChangeNotifier {
     }
   }
 
-  /// Lädt die nächste Seite für die aktuell gesetzte Suche.
+ /// Loads the next page for the currently active search.
   Future<void> loadMore() async {
     if (isLoading) return;
 
@@ -67,7 +67,7 @@ class ExploreSongsProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  /// Setzt den State auf „leer“ ohne Fehler.
+  /// Sets the state to "empty" without errors.
   void reset() {
     isLoading = false;
     error = null;
@@ -76,6 +76,6 @@ class ExploreSongsProvider extends ChangeNotifier {
   }
 
 
-  /// Pull-to-Refresh: lädt dieselbe Suche erneut.
+  /// Pull-to-Refresh: loads same site again.
   Future<void> refresh() => loadInitial(_currentQuery);
 }

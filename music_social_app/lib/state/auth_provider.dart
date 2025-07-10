@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import '../services/spotify_auth_service.dart';
 
-/// Globaler Auth-Status für TuneTalkr.
-/// * isLoggedIn – Spotify-Login erfolgreich
-/// * isGuest    – Nutzer hat „Als Gast fortfahren“ gewählt
-/// * displayName – Spotify-Anzeigename (oder 'Guest')
+/// Global Auth-Status 
+/// * isLoggedIn – Spotify-Login successful
+/// * isGuest    – User is in Guest-Modus (no Spotify-Login)
+/// * displayName – Spotifyname of the logged-in user or 'Guest'
 class AuthProvider extends ChangeNotifier {
   // ── private ----------------------------------------------------------------
   bool _isLoggedIn = false;
@@ -19,7 +19,6 @@ class AuthProvider extends ChangeNotifier {
   String get displayName => _displayName ?? 'Guest';
 
   // ── restore Session --------------------------------------------------------
-  /// Beim App-Start aufrufen: prüft gespeicherte Tokens und loggt ggf. ein.
   Future<void> restore() async {
     _isBusy = true;
     notifyListeners();
@@ -31,7 +30,6 @@ class AuthProvider extends ChangeNotifier {
         _isLoggedIn = true;
         _displayName = me.displayName ?? 'Unknown';
       }
-      // else: weder Token noch Guest-Flag ⇒ Login-Seite anzeigen
     } catch (e) {
       debugPrint('AuthProvider.restore – $e');
     } finally {
@@ -54,14 +52,14 @@ class AuthProvider extends ChangeNotifier {
       _displayName = me.displayName ?? 'Unknown';
     } catch (e) {
       debugPrint('AuthProvider.loginWithSpotify – $e');
-      rethrow; // UI kann SnackBar zeigen
+      rethrow; 
     } finally {
       _isBusy = false;
       notifyListeners();
     }
   }
 
-  // ── Gast-Modus -------------------------------------------------------------
+  // ── Guest-Mode -------------------------------------------------------------
   void continueAsGuest() {
     _isGuest = true;
     _isLoggedIn = false;

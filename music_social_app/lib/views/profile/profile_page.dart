@@ -15,9 +15,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage>
     with AutomaticKeepAliveClientMixin {
-  // ─────────────────────────────────────────────
-  //  eigener State (nur Bio-Text)
-  // ─────────────────────────────────────────────
+  //  Usse Bio
   String bio = 'Music lover. Concert goer. Always looking for new tracks.';
 
   //  KeepAlive (Profil-Tab in BottomNavigation)
@@ -44,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage>
     }
   }
 
-  //  Login / Logout über AuthProvider
+  //  Login / Logout with AuthProvider
   Future<void> _toggleSpotifyLogin(AuthProvider auth) async {
     if (auth.isLoggedIn) {
       await auth.logout();
@@ -63,13 +61,13 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // wichtig bei KeepAlive
+    super.build(context); 
 
     final auth = context.watch<AuthProvider>();
     final currentUser = auth.displayName;
     final loggedIn = auth.isLoggedIn;
 
-    // Beispiel-Filter für Activity-Feed
+    //  Filter Feed-Posts for current user
     final userPosts =
         feedPosts.where((p) => p['user'] == currentUser).toList();
 
@@ -252,7 +250,7 @@ class _ProfilePageState extends State<ProfilePage>
       );
 }
 
-/// Kleine Hilfs-Widget-Klasse für Follower-Stats
+/// Stat Column Widget
 class _StatColumn extends StatelessWidget {
   final String label;
   final String value;

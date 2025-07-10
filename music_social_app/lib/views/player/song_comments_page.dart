@@ -27,7 +27,7 @@ class SongCommentsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Coverbild
+            // Coverimage
             Image.asset(
               'assets/images/cover1.jpg',
               height: 260,
@@ -36,7 +36,7 @@ class SongCommentsPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Songtitel und Künstler
+            // Songtitel and Artist
             Text(
               song['title'] ?? '',
               style: const TextStyle(
@@ -53,7 +53,7 @@ class SongCommentsPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Player-Steuerelemente
+            // Player-Controls
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: const [
@@ -66,7 +66,7 @@ class SongCommentsPage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            // Comments Überschrift
+            // Comments Headline  
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -80,7 +80,7 @@ class SongCommentsPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Kommentare
+            // Comments List
             if (commentsForSong.isEmpty)
               const Text(
                 'No comments yet.',

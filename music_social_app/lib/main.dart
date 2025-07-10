@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import 'state/auth_provider.dart';      // globaler Login-Status
-import 'app_start/auth_gate.dart';      // zeigt LoginPage oder MainNavigation
+import 'state/auth_provider.dart';      // global Auth-Provider for Login-state
+import 'app_start/auth_gate.dart';      // shows LoginPage or MainNavigation
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');          // Secrets & Keys laden
+  await dotenv.load(fileName: '.env');          // load Secrets & Keys 
 
   runApp(
     ChangeNotifierProvider<AuthProvider>(
-      create: (_) => AuthProvider()..restore(), // vorhandene Session prüfen
+      create: (_) => AuthProvider()..restore(), 
       child: const TuneTalkrApp(),
     ),
   );
 }
 
-/// Root-Widget der App.  Hält nur Theme & leitet an den AuthGate weiter.
+/// Root widget of the app. Holds only the theme and delegates to the AuthGate.
 class TuneTalkrApp extends StatelessWidget {
   const TuneTalkrApp({super.key});
 
@@ -38,7 +38,7 @@ class TuneTalkrApp extends StatelessWidget {
         textTheme:
             const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: const AuthGate(),            // entscheidet: LoginPage oder Home
+      home: const AuthGate(),            
     );
   }
 }

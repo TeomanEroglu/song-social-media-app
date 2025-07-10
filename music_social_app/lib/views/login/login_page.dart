@@ -13,7 +13,7 @@ class LoginPage extends StatelessWidget {
       backgroundColor: const Color(0xFF121212),
       body: Stack(
         children: [
-          // ───────────── Haupt-UI ─────────────
+          // ───────────── Main-UI ─────────────
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -33,7 +33,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 48),
 
-                  // Mit Spotify anmelden
+                  // Login with Spotify Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -42,7 +42,6 @@ class LoginPage extends StatelessWidget {
                           : () async {
                               try {
                                 await context.read<AuthProvider>().loginWithSpotify();
-                                // AuthGate kümmert sich um Navigation
                               } catch (_) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Login failed')),
@@ -50,7 +49,7 @@ class LoginPage extends StatelessWidget {
                               }
                             },
                       icon: const Icon(Icons.login),
-                      label: const Text('Mit Spotify anmelden'),
+                      label: const Text('Login with Spotify'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1DB954),
                         foregroundColor: Colors.white,
@@ -64,14 +63,14 @@ class LoginPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  // Als Gast fortfahren
+                  // Continue as Guest Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: auth.isBusy
                           ? null
                           : () => context.read<AuthProvider>().continueAsGuest(),
-                      child: const Text('Als Gast fortfahren'),
+                      child: const Text('Continue as Guest'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2A2A2A),
                         foregroundColor: Colors.white,
@@ -88,7 +87,7 @@ class LoginPage extends StatelessWidget {
             ),
           ),
 
-          // ───────────── Lade-Overlay ─────────────
+          // ───────────── Load Overlay ─────────────
           if (auth.isBusy)
             Container(
               color: Colors.black54,

@@ -168,6 +168,7 @@ class _LibraryPageState extends State<LibraryPage> {
     Function(String) onChanged,
   ) {
     return DropdownButtonFormField<String>(
+      isExpanded: true,
       dropdownColor: const Color(0xFF2A2A2A),
       value: current,
       items:

@@ -79,7 +79,7 @@ Other platform targets (Web, macOS, Windows, Linux) can be tested with the respe
 ```
 ├── lib/
 │   ├── main.dart          # Application entry point & DI setup
-│   ├── navigation/        # GoRouter config & bottom‑nav layout
+│   ├── navigation/        # Custom bottom navigation system & bottom‑nav layout
 │   ├── state/             # Global app state (Provider / Riverpod)
 │   ├── services/          # API clients & persistence helpers
 │   ├── data/              # Temporary sample data & domain models

@@ -1,6 +1,6 @@
 # TuneTalkr
 
-TuneTalkr is a cross‑platform **Flutter** app that finally makes music social. Users can rate, discuss, and share songs and albums—all in one place and without awkward links. 
+TuneTalkr is a cross‑platform **Flutter** app that finally makes music social. Users can rate and discuss songs and albums—all in one place and without awkward links. 
 
 ## Key Features
 

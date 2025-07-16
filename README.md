@@ -46,7 +46,7 @@ SPOTIFY_CLIENT_ID=<your_id>
 SPOTIFY_REDIRECT_URI=tunetalkr://auth
 ```
 
-(Add other keys such as `SPOTIFY_CLIENT_SECRET` or Firebase configs in the same way.)
+(Add other keys such as `SPOTIFY_CLIENT_SECRET` in the same way.)
 
 ### Launch the app (hot reload)
 
